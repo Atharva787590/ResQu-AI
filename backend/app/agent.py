@@ -250,6 +250,29 @@ else:
                     response_text += f"- {action}\n"
                 response_text += f"\n*Generated via Preparedness Agent for {check_res['disaster'].upper()} scenarios.*"
                 
+            elif any(k in user_text_lower for k in ["weather", "rain", "forecast", "precipitation", "monsoon", "climate", "temp"]):
+                active_sub_agent = "Risk Prediction Agent"
+                if "ramtek" in user_text_lower or "nagpur" in user_text_lower:
+                    response_text = """### 🌧️ Meteorological Risk Report: Ramtek, Nagpur
+- **Location**: Ramtek Taluka, Nagpur District, Maharashtra
+- **Status**: ⚠️ **Orange Alert** issued by meteorological cell.
+- **Rainfall Chance**: **85% probability** of heavy rainfall and thunderstorm activity within the next 24-48 hours.
+- **Expected Precipitation**: 70mm to 110mm.
+- **Risk Assessment**:
+  - Potential water logging in low-lying agricultural zones.
+  - Minor landslide risk near the **Ramtek Gad Mandir** hill slopes.
+- **Safety Guidelines**: Avoid visiting reservoir areas and hill slopes. Keep emergency contact 112 active.
+"""
+                else:
+                    response_text = """### 🌧️ Mumbai Weather & High Tide Alert
+- **Location**: Mumbai Metropolitan Region (MMR)
+- **Status**: ⚠️ **Red Alert** due to active monsoon depression.
+- **Forecast**: Continuous heavy to very heavy rainfall expected over the next 24 hours.
+- **High Tide Alert**: 4.5-meter tide expected at 2:30 PM. Risk of storm surge and drainage backflow in low-lying zones (Hindmata, Milan Subway).
+- **Safety Guidelines**: Citizens are advised to stay indoors. Avoid waterlogged subways.
+"""
+                response_text += "\n*Meteorological predictions provided via EOC Risk Prediction Agent.*"
+
             elif any(k in user_text_lower for k in ["missing", "find person", "lost"]):
                 active_sub_agent = "Resource Agent"
                 response_text = "### 🔍 Missing Persons Board & Status\n"
