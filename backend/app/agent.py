@@ -23,6 +23,27 @@ from .tools import (
 
 logger = logging.getLogger(__name__)
 
+# Try loading environment variables from .env file
+try:
+    possible_paths = [
+        os.path.join(os.getcwd(), ".env"),
+        os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), ".env"),
+        os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), ".env")
+    ]
+    for path in possible_paths:
+        if os.path.exists(path):
+            with open(path, "r", encoding="utf-8") as f:
+                for line in f:
+                    line = line.strip()
+                    if line and not line.startswith("#") and "=" in line:
+                        k, v = line.split("=", 1)
+                        k = k.strip()
+                        v = v.strip().strip("'\"")
+                        os.environ[k] = v
+            break
+except Exception as e:
+    logger.warning(f"Error loading .env file: {e}")
+
 # Check if LLM API key or GCP project is present
 HAS_CREDENTIALS = "GOOGLE_API_KEY" in os.environ or "GOOGLE_CLOUD_PROJECT" in os.environ
 
@@ -271,26 +292,29 @@ else:
                 
             elif any(k in user_text_lower for k in ["weather", "rain", "forecast", "precipitation", "monsoon", "climate", "temp"]):
                 active_sub_agent = "Risk Prediction Agent"
-                # Simple parser for location from user text
+                # Smart parser for location from user text
                 location = "Mumbai"
-                if "in " in user_text_lower:
-                    parts = user_text.split("in ")
-                    if len(parts) > 1:
-                        location = parts[1].strip("?.! ")
-                elif "at " in user_text_lower:
-                    parts = user_text.split("at ")
-                    if len(parts) > 1:
-                        location = parts[1].strip("?.! ")
-                elif "for " in user_text_lower:
-                    parts = user_text.split("for ")
-                    if len(parts) > 1:
-                        location = parts[1].strip("?.! ")
-                elif "ramtek" in user_text_lower:
-                    location = "Ramtek, Nagpur"
-                elif "nagpur" in user_text_lower:
-                    location = "Nagpur"
-                elif "mumbai" in user_text_lower:
-                    location = "Mumbai"
+                parsed_loc = False
+                keywords = ["in ", "for ", "at ", "weather ", "rain ", "forecast ", "temp "]
+                for kw in keywords:
+                    if kw in user_text_lower:
+                        idx = user_text_lower.find(kw)
+                        extracted = user_text[idx + len(kw):].strip("?.! ")
+                        # Remove common trailing noise words
+                        for stop_word in ["chance", "probability", "report", "forecast", "condition", "warning", "safety"]:
+                            if extracted.lower().endswith(" " + stop_word):
+                                extracted = extracted[:-len(stop_word) - 1].strip()
+                        if extracted:
+                            location = extracted
+                            parsed_loc = True
+                            break
+                if not parsed_loc:
+                    if "ramtek" in user_text_lower:
+                        location = "Ramtek, Nagpur"
+                    elif "nagpur" in user_text_lower:
+                        location = "Nagpur"
+                    elif "mumbai" in user_text_lower:
+                        location = "Mumbai"
                 
                 weather_res = get_weather_info(location)
                 response_text = f"### 🌧️ Meteorological & Safety Risk Report: {weather_res['location']}\n"
@@ -302,7 +326,19 @@ else:
                 response_text += f"#### 🛡️ EOC Safety Assessment & Guidelines:\n"
                 
                 risk_lvl = weather_res['risk_level'].lower()
-                if "high" in risk_lvl or "critical" in risk_lvl or "red" in weather_res['alert_status'].lower() or "orange" in weather_res['alert_status'].lower():
+                alert_status_lower = weather_res['alert_status'].lower()
+                
+                # Check for high precipitation or wind speed threshold
+                is_high_risk = (
+                    "high" in risk_lvl or 
+                    "critical" in risk_lvl or 
+                    "red" in alert_status_lower or 
+                    "orange" in alert_status_lower or
+                    "heavy" in alert_status_lower or
+                    "storm" in alert_status_lower
+                )
+                
+                if is_high_risk:
                     if "ramtek" in location.lower():
                         response_text += "1. **Landslide Warning**: High risk of soil instability and minor landslides around **Ramtek Gad Mandir** hill slopes. Avoid visiting high slopes or trekking routes.\n"
                         response_text += "2. **Reservoir Alert**: Stay away from water reservoirs and river bodies (Khindsi Lake) due to rapid catchment runoff.\n"
@@ -312,16 +348,21 @@ else:
                         response_text += "1. **Tidal Surge Danger**: Avoid coastal regions (Marine Drive, Juhu, Gateway of India) due to high-tide (4.5m) risk.\n"
                         response_text += "2. **Subway Inundation**: Avoid subways (Milan, Khar, Andheri) and low-lying transit corridors.\n"
                         response_text += "3. **Stay Indoors**: Citizens are strongly advised to remain in secure structures. Avoid travel unless critical.\n"
-                        response_text += "4. **Contacts**: For rescue or evacuation assistance, dial BMC Disaster Cell at 1916 or National Hotline 112.\n"
+                        response_text += "4. **Contacts**: For rescue or evacuation assistance, BMC Disaster Cell is on standby at 1916.\n"
                     else:
-                        response_text += f"1. **Severe Weather Action**: Heavy precipitation detected. Seek shelter in high-ground concrete structures immediately.\n"
+                        response_text += f"1. **Severe Weather Advisory**: Heavy precipitation and hazard risk detected for {location}. Seek shelter in concrete structures immediately.\n"
                         response_text += "2. **Evacuation Readiness**: Monitor local emergency channels and prepare a family go-bag.\n"
                         response_text += "3. **Transit Warning**: Roads may be flooded or blocked. Do not attempt to cross flooded roadways.\n"
                         response_text += "4. **Emergency Contact**: Keep local rescue helpline numbers active and stay in communication.\n"
                 else:
-                    response_text += "1. **Standard Operations**: No active weather warning. Normal safety precautions apply.\n"
-                    response_text += "2. **Outdoor Travel**: Safe for travel, but remain alert for local convective shower updates.\n"
-                    response_text += "3. **Water Safety**: Exercise standard caution when near rivers, beaches, or reservoirs.\n"
+                    if "heat" in weather_res['condition'].lower() or (weather_res['temperature_c'].isdigit() and int(weather_res['temperature_c']) > 38):
+                        response_text += "1. **Heatwave Advisory**: High thermal index. Drink water and carry ORS.\n"
+                        response_text += "2. **Outdoor Travel**: Limit direct exposure to sunlight during peak hours (12 PM - 4 PM).\n"
+                        response_text += "3. **Shade & Ventilation**: Keep children, elderly individuals, and pets in cool, shaded areas.\n"
+                    else:
+                        response_text += "1. **Standard Operations**: No active weather warning. Normal safety precautions apply.\n"
+                        response_text += "2. **Outdoor Travel**: Safe for travel, but remain alert for local convective shower updates.\n"
+                        response_text += "3. **Water Safety**: Exercise standard caution when near rivers, beaches, or reservoirs.\n"
                 
                 response_text += f"\n*Real-time meteorological and risk prediction data compiled via EOC Risk Prediction Agent.*"
 

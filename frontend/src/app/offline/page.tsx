@@ -230,6 +230,7 @@ export default function OfflinePage() {
               <p className="text-sm font-bold text-slate-800 mt-0.5">101</p>
             </div>
           </div>
+        </div>
       </div>
     </div>
   );
