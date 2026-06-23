@@ -59,13 +59,13 @@ export default function RoutesPage() {
   return (
     <div className="flex-1 flex flex-col md:flex-row h-screen">
       {/* Route Planner Sidebar */}
-      <div className="w-full md:w-96 bg-slate-900 border-r border-slate-800 flex flex-col h-full shrink-0">
-        <div className="p-5 border-b border-slate-850 space-y-4 bg-slate-900/50">
-          <h2 className="text-lg font-bold text-white flex items-center gap-2">
-            <Navigation className="h-5 w-5 text-rose-500" />
+      <div className="w-full md:w-96 bg-white border-r border-slate-200/80 flex flex-col h-full shrink-0">
+        <div className="p-5 border-b border-slate-200 space-y-4 bg-slate-50/50">
+          <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+            <Navigation className="h-5 w-5 text-sky-600" />
             Evacuation Route Planner
           </h2>
-          <p className="text-xs text-slate-400 leading-normal">
+          <p className="text-xs text-slate-500 leading-normal">
             Identify safe roads. Click on the map to set starting coordinates and destination assembly points.
           </p>
         </div>
@@ -75,17 +75,17 @@ export default function RoutesPage() {
           <form onSubmit={handleCalculateRoute} className="space-y-4">
             {/* Start Location Input */}
             <div className={`p-3.5 rounded-xl border transition-all ${
-              activeSelect === "start" ? "bg-slate-950 border-rose-500" : "bg-slate-950/40 border-slate-800"
+              activeSelect === "start" ? "bg-sky-50/40 border-sky-500/50" : "bg-white border-slate-200"
             }`}>
               <div className="flex justify-between items-center mb-2">
-                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-                  <span className="h-2 w-2 rounded-full bg-amber-400"></span> Start Location
+                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+                  <span className="h-2 w-2 rounded-full bg-amber-450"></span> Start Location
                 </span>
                 <button
                   type="button"
                   onClick={() => setActiveSelect("start")}
                   className={`text-[10px] font-bold px-2 py-0.5 rounded transition-colors ${
-                    activeSelect === "start" ? "bg-rose-600 text-white" : "bg-slate-800 text-slate-400 hover:bg-slate-750"
+                    activeSelect === "start" ? "bg-sky-600 text-white" : "bg-slate-100 text-slate-500 hover:bg-slate-200"
                   }`}
                 >
                   Click Map to Set
@@ -93,25 +93,25 @@ export default function RoutesPage() {
               </div>
               <div className="grid grid-cols-2 gap-2 text-xs">
                 <div>
-                  <span className="text-[10px] text-slate-500 block mb-0.5">Latitude</span>
+                  <span className="text-[10px] text-slate-400 block mb-0.5">Latitude</span>
                   <input
                     type="number"
                     step="0.000001"
                     required
                     value={coords.start_lat}
                     onChange={(e) => setCoords({ ...coords, start_lat: parseFloat(e.target.value) })}
-                    className="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-slate-200"
+                    className="w-full bg-white border border-slate-200 rounded px-2.5 py-1.5 text-slate-800 focus:outline-none focus:border-sky-500"
                   />
                 </div>
                 <div>
-                  <span className="text-[10px] text-slate-500 block mb-0.5">Longitude</span>
+                  <span className="text-[10px] text-slate-400 block mb-0.5">Longitude</span>
                   <input
                     type="number"
                     step="0.000001"
                     required
                     value={coords.start_lng}
                     onChange={(e) => setCoords({ ...coords, start_lng: parseFloat(e.target.value) })}
-                    className="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-slate-200"
+                    className="w-full bg-white border border-slate-200 rounded px-2.5 py-1.5 text-slate-800 focus:outline-none focus:border-sky-500"
                   />
                 </div>
               </div>
@@ -119,17 +119,17 @@ export default function RoutesPage() {
 
             {/* Destination Input */}
             <div className={`p-3.5 rounded-xl border transition-all ${
-              activeSelect === "end" ? "bg-slate-950 border-rose-500" : "bg-slate-950/40 border-slate-800"
+              activeSelect === "end" ? "bg-sky-50/40 border-sky-500/50" : "bg-white border-slate-200"
             }`}>
               <div className="flex justify-between items-center mb-2">
-                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-                  <span className="h-2 w-2 rounded-full bg-cyan-500"></span> Destination Shelter
+                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+                  <span className="h-2 w-2 rounded-full bg-sky-550"></span> Destination Shelter
                 </span>
                 <button
                   type="button"
                   onClick={() => setActiveSelect("end")}
                   className={`text-[10px] font-bold px-2 py-0.5 rounded transition-colors ${
-                    activeSelect === "end" ? "bg-rose-600 text-white" : "bg-slate-800 text-slate-400 hover:bg-slate-750"
+                    activeSelect === "end" ? "bg-sky-600 text-white" : "bg-slate-100 text-slate-500 hover:bg-slate-200"
                   }`}
                 >
                   Click Map to Set
@@ -137,25 +137,25 @@ export default function RoutesPage() {
               </div>
               <div className="grid grid-cols-2 gap-2 text-xs">
                 <div>
-                  <span className="text-[10px] text-slate-500 block mb-0.5">Latitude</span>
+                  <span className="text-[10px] text-slate-400 block mb-0.5">Latitude</span>
                   <input
                     type="number"
                     step="0.000001"
                     required
                     value={coords.end_lat}
                     onChange={(e) => setCoords({ ...coords, end_lat: parseFloat(e.target.value) })}
-                    className="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-slate-200"
+                    className="w-full bg-white border border-slate-200 rounded px-2.5 py-1.5 text-slate-800 focus:outline-none focus:border-sky-500"
                   />
                 </div>
                 <div>
-                  <span className="text-[10px] text-slate-500 block mb-0.5">Longitude</span>
+                  <span className="text-[10px] text-slate-400 block mb-0.5">Longitude</span>
                   <input
                     type="number"
                     step="0.000001"
                     required
                     value={coords.end_lng}
                     onChange={(e) => setCoords({ ...coords, end_lng: parseFloat(e.target.value) })}
-                    className="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-slate-200"
+                    className="w-full bg-white border border-slate-200 rounded px-2.5 py-1.5 text-slate-800 focus:outline-none focus:border-sky-500"
                   />
                 </div>
               </div>
@@ -164,7 +164,7 @@ export default function RoutesPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-2.5 bg-rose-600 hover:bg-rose-500 disabled:bg-slate-800 disabled:text-slate-500 text-white font-semibold rounded-xl text-sm transition-all shadow-lg border border-rose-500 disabled:border-slate-800"
+              className="w-full py-2.5 bg-sky-600 hover:bg-sky-500 disabled:bg-slate-100 disabled:text-slate-400 text-white font-semibold rounded-xl text-sm transition-all shadow-sm border border-sky-600 disabled:border-slate-200"
             >
               {loading ? "Calculating Safest Path..." : "Calculate Safest Route"}
             </button>
@@ -172,44 +172,44 @@ export default function RoutesPage() {
 
           {/* Route Result Display */}
           {routeResult && (
-            <div className="space-y-4 pt-3 border-t border-slate-800">
-              <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Route Safety Report</h3>
+            <div className="space-y-4 pt-3 border-t border-slate-200">
+              <h3 className="text-xs font-bold text-slate-450 uppercase tracking-wider">Route Safety Report</h3>
               
               <div className={`p-4 rounded-xl border flex gap-3 ${
                 routeResult.status === "safe" 
-                  ? "bg-emerald-950/20 border-emerald-900/40 text-emerald-300"
-                  : "bg-amber-950/20 border-amber-900/40 text-amber-300"
+                  ? "bg-emerald-50 border-emerald-100 text-emerald-800"
+                  : "bg-amber-50 border-amber-100 text-amber-800"
               }`}>
                 {routeResult.status === "safe" ? (
-                  <CheckCircle className="h-5 w-5 shrink-0 mt-0.5 text-emerald-500" />
+                  <CheckCircle className="h-5 w-5 shrink-0 mt-0.5 text-emerald-600" />
                 ) : (
-                  <AlertCircle className="h-5 w-5 shrink-0 mt-0.5 text-amber-500" />
+                  <AlertCircle className="h-5 w-5 shrink-0 mt-0.5 text-amber-600" />
                 )}
                 <div>
-                  <h4 className="font-bold text-sm text-white">Route: {routeResult.status.toUpperCase()}</h4>
-                  <p className="text-xs text-slate-300 mt-1 leading-relaxed">{routeResult.note}</p>
+                  <h4 className="font-bold text-sm text-slate-800">Route: {routeResult.status.toUpperCase()}</h4>
+                  <p className="text-xs text-slate-600 mt-1 leading-relaxed">{routeResult.note}</p>
                 </div>
               </div>
 
               {/* Steps/Directions */}
-              <div className="bg-slate-950/40 border border-slate-800 rounded-xl p-4 space-y-3">
-                <h4 className="text-xs font-bold text-white flex items-center gap-1.5">
-                  <Info className="h-3.5 w-3.5 text-slate-400" />
+              <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-3">
+                <h4 className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                  <Info className="h-3.5 w-3.5 text-slate-500" />
                   Navigation Instructions
                 </h4>
-                <div className="space-y-2 text-xs text-slate-400">
+                <div className="space-y-2 text-xs text-slate-600">
                   <div className="flex gap-2">
-                    <span className="text-slate-500">1.</span>
+                    <span className="text-slate-450">1.</span>
                     <span>Depart from origin. Move along designated safe corridors.</span>
                   </div>
                   {routeResult.status === "re-routed" && (
-                    <div className="flex gap-2 text-amber-400 font-medium">
+                    <div className="flex gap-2 text-amber-705 font-medium">
                       <span>⚠️</span>
                       <span>Bypassed flash flood risk area. Retain high visibility.</span>
                     </div>
                   )}
                   <div className="flex gap-2">
-                    <span className="text-slate-500">{routeResult.status === "re-routed" ? "3." : "2."}</span>
+                    <span className="text-slate-450">{routeResult.status === "re-routed" ? "3." : "2."}</span>
                     <span>Arrive at assembly point shelter. Register occupancy.</span>
                   </div>
                 </div>

@@ -61,9 +61,9 @@ export default function Map({
 
   if (!mounted) {
     return (
-      <div className="w-full h-full bg-slate-900 flex items-center justify-center text-slate-400">
+      <div className="w-full h-full bg-slate-50 flex items-center justify-center text-slate-505">
         <div className="flex flex-col items-center gap-3">
-          <div className="h-8 w-8 border-4 border-rose-500 border-t-transparent rounded-full animate-spin"></div>
+          <div className="h-8 w-8 border-4 border-sky-600 border-t-transparent rounded-full animate-spin"></div>
           <p className="text-sm font-medium">Initializing Map System...</p>
         </div>
       </div>
@@ -80,12 +80,12 @@ export default function Map({
     <MapContainer
       center={center}
       zoom={zoom}
-      style={{ height: "100%", width: "100%", background: "#0f172a" }}
-      className="rounded-2xl overflow-hidden shadow-2xl border border-slate-800"
+      style={{ height: "100%", width: "100%", background: "#f8fafc" }}
+      className="rounded-2xl overflow-hidden shadow-sm border border-slate-200/80"
     >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-        url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+        url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
       />
       
       {onMapClick && <MapClickEvents onClick={onMapClick} />}

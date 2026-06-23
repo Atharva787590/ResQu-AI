@@ -122,23 +122,23 @@ export default function ChatPage() {
   };
 
   return (
-    <div className="flex-1 flex flex-col md:flex-row h-screen">
+    <div className="flex-1 flex flex-col md:flex-row h-screen bg-slate-50/30">
       {/* Chat Area (Main Panel) */}
-      <div className="flex-1 flex flex-col h-full bg-slate-950 border-r border-slate-800">
+      <div className="flex-1 flex flex-col h-full bg-white border-r border-slate-200/80">
         {/* Chat Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-800 bg-slate-900/50">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-slate-50/50">
           <div className="flex items-center gap-3">
-            <div className="bg-rose-950 text-rose-500 p-2 rounded-xl border border-rose-900/40">
+            <div className="bg-sky-50 text-sky-650 p-2 rounded-xl border border-sky-100">
               <MessageSquare className="h-5 w-5 animate-pulse" />
             </div>
             <div>
-              <h2 className="font-bold text-white text-md">AI Emergency Coordinator</h2>
-              <p className="text-slate-400 text-xs mt-0.5">Google ADK 2.0 Multi-Agent Layer</p>
+              <h2 className="font-bold text-slate-800 text-md">AI Emergency Coordinator</h2>
+              <p className="text-slate-500 text-xs mt-0.5">Google ADK 2.0 Multi-Agent Layer</p>
             </div>
           </div>
           <button 
             onClick={handleResetSession}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold rounded-lg text-xs transition-colors border border-slate-700"
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-105 hover:bg-slate-200 text-slate-650 font-semibold rounded-lg text-xs transition-colors border border-slate-200"
           >
             <RefreshCw className="h-3 w-3" />
             Reset Session
@@ -157,46 +157,46 @@ export default function ChatPage() {
                 {/* Avatar */}
                 <div className={`h-9 w-9 rounded-xl border shrink-0 flex items-center justify-center ${
                   isAgent 
-                    ? "bg-slate-900 border-rose-900/40 text-rose-500" 
-                    : "bg-slate-800 border-slate-700 text-slate-300"
+                    ? "bg-slate-50 border-slate-200 text-sky-650" 
+                    : "bg-slate-100 border-slate-200 text-slate-600"
                 }`}>
-                  {isAgent ? <Bot className="h-4 w-4" /> : <User className="h-4 w-4" />}
+                  {isAgent ? <Bot className="h-4.5 w-4.5" /> : <User className="h-4.5 w-4.5" />}
                 </div>
 
                 {/* Bubble */}
                 <div className="space-y-1">
                   {/* Agent Tag */}
                   {isAgent && msg.agentName && (
-                    <span className="text-[10px] uppercase tracking-wider font-extrabold text-rose-500 bg-rose-950/30 border border-rose-900/20 px-2 py-0.5 rounded-full">
+                    <span className="text-[10px] uppercase tracking-wider font-extrabold text-sky-650 bg-sky-50 border border-sky-100 px-2 py-0.5 rounded-full">
                       {msg.agentName}
                     </span>
                   )}
                   
                   <div className={`p-4 rounded-2xl text-sm leading-relaxed border ${
                     isAgent
-                      ? "bg-slate-900 border-slate-800/80 text-slate-200"
-                      : "bg-rose-950/40 border-rose-900/30 text-rose-100"
+                      ? "bg-slate-50 border-slate-200/80 text-slate-700"
+                      : "bg-sky-50 border-sky-100/80 text-slate-800"
                   }`}>
                     {/* Markdown rendering simulation (simple bold/headers formatting) */}
                     <div className="whitespace-pre-wrap space-y-2">
                       {msg.text.split("\n").map((line, idx) => {
                         if (line.startsWith("###")) {
-                          return <h3 key={idx} className="font-bold text-white text-md mt-3 mb-1">{line.replace("###", "").trim()}</h3>;
+                          return <h3 key={idx} className="font-bold text-slate-800 text-md mt-3 mb-1">{line.replace("###", "").trim()}</h3>;
                         }
                         if (line.startsWith("####")) {
-                          return <h4 key={idx} className="font-bold text-white text-sm mt-2 mb-1">{line.replace("####", "").trim()}</h4>;
+                          return <h4 key={idx} className="font-bold text-slate-800 text-sm mt-2 mb-1">{line.replace("####", "").trim()}</h4>;
                         }
                         if (line.startsWith("- ")) {
-                          return <li key={idx} className="ml-4 list-disc text-slate-300">{line.replace("- ", "").trim()}</li>;
+                          return <li key={idx} className="ml-4 list-disc text-slate-600">{line.replace("- ", "").trim()}</li>;
                         }
                         if (line.startsWith("**") && line.endsWith("**")) {
-                          return <p key={idx} className="font-bold text-slate-100">{line.replace(/\*\*/g, "")}</p>;
+                          return <p key={idx} className="font-bold text-slate-700">{line.replace(/\*\*/g, "")}</p>;
                         }
-                        return <p key={idx} className="text-slate-300">{line}</p>;
+                        return <p key={idx} className="text-slate-650">{line}</p>;
                       })}
                     </div>
                   </div>
-                  <span className="block text-[9px] text-slate-500 px-1">
+                  <span className="block text-[9px] text-slate-400 px-1">
                     {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </span>
                 </div>
@@ -207,7 +207,7 @@ export default function ChatPage() {
         </div>
 
         {/* Chat Input */}
-        <form onSubmit={handleSendMessage} className="p-4 border-t border-slate-800 bg-slate-900/30 flex gap-3">
+        <form onSubmit={handleSendMessage} className="p-4 border-t border-slate-200 bg-slate-50/30 flex gap-3">
           <input
             type="text"
             required
@@ -215,15 +215,15 @@ export default function ChatPage() {
             placeholder="Type your message (e.g. 'Where is the nearest shelter?', 'SOS alert', 'First aid for bleeding')..."
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            className="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-200 focus:outline-none focus:border-rose-500 disabled:opacity-50"
+            className="flex-1 bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 disabled:opacity-50"
           />
           <button
             type="submit"
             disabled={loading || !input.trim()}
-            className="px-5 bg-rose-600 hover:bg-rose-500 disabled:bg-slate-800 disabled:text-slate-500 text-white font-semibold rounded-xl text-sm transition-all shadow-lg shadow-rose-900/30 flex items-center justify-center shrink-0 border border-rose-500 disabled:border-slate-800"
+            className="px-5 bg-sky-650 hover:bg-sky-600 disabled:bg-slate-100 disabled:text-slate-400 text-white font-semibold rounded-xl text-sm transition-all shadow-sm flex items-center justify-center shrink-0 border border-sky-650 disabled:border-slate-200"
           >
             {loading ? (
-              <div className="h-4.5 w-4.5 border-2 border-slate-500 border-t-transparent rounded-full animate-spin"></div>
+              <div className="h-4.5 w-4.5 border-2 border-slate-400 border-t-transparent rounded-full animate-spin"></div>
             ) : (
               <Send className="h-4.5 w-4.5" />
             )}
@@ -232,18 +232,18 @@ export default function ChatPage() {
       </div>
 
       {/* EOC Dispatch Logger (Side Panel) */}
-      <div className="w-80 bg-slate-950 border-l border-slate-800 hidden lg:flex flex-col h-full">
-        <div className="px-6 py-4 border-b border-slate-800 bg-slate-900/30">
-          <h3 className="font-bold text-white text-sm flex items-center gap-2">
-            <Activity className="h-4 w-4 text-rose-500 animate-pulse" />
+      <div className="w-80 bg-slate-50 border-l border-slate-200 hidden lg:flex flex-col h-full">
+        <div className="px-6 py-4 border-b border-slate-200 bg-slate-100/30">
+          <h3 className="font-bold text-slate-800 text-sm flex items-center gap-2">
+            <Activity className="h-4 w-4 text-sky-650 animate-pulse" />
             EOC Router Log
           </h3>
-          <p className="text-slate-500 text-xs mt-0.5">Real-time agent delegation traces</p>
+          <p className="text-slate-550 text-xs mt-0.5">Real-time agent delegation traces</p>
         </div>
-        <div className="flex-1 p-5 overflow-y-auto font-mono text-[10px] text-slate-400 space-y-3">
+        <div className="flex-1 p-5 overflow-y-auto font-mono text-[10px] text-slate-500 space-y-3">
           {activeAgentLog.map((log, index) => (
             <div key={index} className="flex gap-2">
-              <span className="text-rose-500">[{new Date().toLocaleTimeString([], { hour12: false })}]</span>
+              <span className="text-sky-650">[{new Date().toLocaleTimeString([], { hour12: false })}]</span>
               <span className="leading-normal">{log}</span>
             </div>
           ))}

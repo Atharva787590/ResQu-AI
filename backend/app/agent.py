@@ -17,7 +17,8 @@ from .tools import (
     get_safe_route,
     get_preparedness_checklist,
     report_missing_person,
-    register_volunteer
+    register_volunteer,
+    get_weather_info
 )
 
 logger = logging.getLogger(__name__)
@@ -49,6 +50,10 @@ def tool_get_safe_route(start_lat: float, start_lng: float, end_lat: float, end_
 def tool_get_preparedness_checklist(disaster_type: str) -> dict:
     """Provides a tailored emergency checklist and supplies list for a specific disaster."""
     return get_preparedness_checklist(disaster_type)
+
+def tool_get_weather_info(location: str) -> dict:
+    """Fetches real-time weather information and safety hazard advisory reports for any location."""
+    return get_weather_info(location)
 
 if HAS_CREDENTIALS:
     # 1. Classification Agent
@@ -116,6 +121,18 @@ if HAS_CREDENTIALS:
         description="Generates emergency readiness checklists and survival plans."
     )
 
+    # 7. Risk Prediction Agent
+    risk_prediction_agent = Agent(
+        name="risk_prediction_agent",
+        model=Gemini(model="gemini-flash-latest"),
+        tools=[tool_get_weather_info],
+        instruction="""You are a Risk Prediction Agent. 
+        Your job is to analyze weather conditions and assess local safety hazards. 
+        Always call tool_get_weather_info to get the real-time weather, temperature, chance of rain, and risk details for the location requested.
+        Explain the current weather state, EOC alert level, and provide clear, wise, actionable safety advice for citizens (e.g. avoiding waterlogged fields, reservoirs, or hill slopes if there is heavy rain).""",
+        description="Analyzes weather conditions and localized disaster risks."
+    )
+
     # Root Coordinator Agent
     root_agent = Agent(
         name="root_agent",
@@ -126,7 +143,8 @@ if HAS_CREDENTIALS:
             medical_agent,
             resource_agent,
             communication_agent,
-            preparedness_agent
+            preparedness_agent,
+            risk_prediction_agent
         ],
         instruction="""You are the ResQu AI Lead Emergency Coordinator. 
         Your role is to understand the user's situation and delegate to the appropriate specialized agent:
@@ -136,6 +154,7 @@ if HAS_CREDENTIALS:
         - Delegate to resource_agent to discover shelters, relief camps, food distribution, or active hazards.
         - Delegate to communication_agent to log a critical SOS alert.
         - Delegate to preparedness_agent to get checklists (flood kit, earthquake kit) or disaster readiness planning.
+        - Delegate to risk_prediction_agent for weather inquiries, rain forecast, flood risk prediction, temperature, or safety concerns related to weather in any location.
         Always guide the user professionally and remain calm.""",
     )
 else:
@@ -252,26 +271,59 @@ else:
                 
             elif any(k in user_text_lower for k in ["weather", "rain", "forecast", "precipitation", "monsoon", "climate", "temp"]):
                 active_sub_agent = "Risk Prediction Agent"
-                if "ramtek" in user_text_lower or "nagpur" in user_text_lower:
-                    response_text = """### 🌧️ Meteorological Risk Report: Ramtek, Nagpur
-- **Location**: Ramtek Taluka, Nagpur District, Maharashtra
-- **Status**: ⚠️ **Orange Alert** issued by meteorological cell.
-- **Rainfall Chance**: **85% probability** of heavy rainfall and thunderstorm activity within the next 24-48 hours.
-- **Expected Precipitation**: 70mm to 110mm.
-- **Risk Assessment**:
-  - Potential water logging in low-lying agricultural zones.
-  - Minor landslide risk near the **Ramtek Gad Mandir** hill slopes.
-- **Safety Guidelines**: Avoid visiting reservoir areas and hill slopes. Keep emergency contact 112 active.
-"""
+                # Simple parser for location from user text
+                location = "Mumbai"
+                if "in " in user_text_lower:
+                    parts = user_text.split("in ")
+                    if len(parts) > 1:
+                        location = parts[1].strip("?.! ")
+                elif "at " in user_text_lower:
+                    parts = user_text.split("at ")
+                    if len(parts) > 1:
+                        location = parts[1].strip("?.! ")
+                elif "for " in user_text_lower:
+                    parts = user_text.split("for ")
+                    if len(parts) > 1:
+                        location = parts[1].strip("?.! ")
+                elif "ramtek" in user_text_lower:
+                    location = "Ramtek, Nagpur"
+                elif "nagpur" in user_text_lower:
+                    location = "Nagpur"
+                elif "mumbai" in user_text_lower:
+                    location = "Mumbai"
+                
+                weather_res = get_weather_info(location)
+                response_text = f"### 🌧️ Meteorological & Safety Risk Report: {weather_res['location']}\n"
+                response_text += f"- **Current Condition**: {weather_res['condition']} ({weather_res['temperature_c']}°C)\n"
+                response_text += f"- **Humidity / Wind**: {weather_res['humidity']} | {weather_res['wind_speed_kmph']}\n"
+                response_text += f"- **Rainfall Probability**: **{weather_res['rainfall_chance']}** (Precipitation: {weather_res['precipitation_mm']})\n"
+                response_text += f"- **EOC Alert Status**: ⚠️ **{weather_res['alert_status']}**\n"
+                response_text += f"- **Safety Risk Level**: **{weather_res['risk_level']}**\n\n"
+                response_text += f"#### 🛡️ EOC Safety Assessment & Guidelines:\n"
+                
+                risk_lvl = weather_res['risk_level'].lower()
+                if "high" in risk_lvl or "critical" in risk_lvl or "red" in weather_res['alert_status'].lower() or "orange" in weather_res['alert_status'].lower():
+                    if "ramtek" in location.lower():
+                        response_text += "1. **Landslide Warning**: High risk of soil instability and minor landslides around **Ramtek Gad Mandir** hill slopes. Avoid visiting high slopes or trekking routes.\n"
+                        response_text += "2. **Reservoir Alert**: Stay away from water reservoirs and river bodies (Khindsi Lake) due to rapid catchment runoff.\n"
+                        response_text += "3. **Agricultural Safety**: Farmers should secure livestock and avoid low-lying waterlogged fields.\n"
+                        response_text += "4. **Helpline**: Keep emergency services (112) active. Keep phones charged and emergency kits ready.\n"
+                    elif "mumbai" in location.lower():
+                        response_text += "1. **Tidal Surge Danger**: Avoid coastal regions (Marine Drive, Juhu, Gateway of India) due to high-tide (4.5m) risk.\n"
+                        response_text += "2. **Subway Inundation**: Avoid subways (Milan, Khar, Andheri) and low-lying transit corridors.\n"
+                        response_text += "3. **Stay Indoors**: Citizens are strongly advised to remain in secure structures. Avoid travel unless critical.\n"
+                        response_text += "4. **Contacts**: For rescue or evacuation assistance, dial BMC Disaster Cell at 1916 or National Hotline 112.\n"
+                    else:
+                        response_text += f"1. **Severe Weather Action**: Heavy precipitation detected. Seek shelter in high-ground concrete structures immediately.\n"
+                        response_text += "2. **Evacuation Readiness**: Monitor local emergency channels and prepare a family go-bag.\n"
+                        response_text += "3. **Transit Warning**: Roads may be flooded or blocked. Do not attempt to cross flooded roadways.\n"
+                        response_text += "4. **Emergency Contact**: Keep local rescue helpline numbers active and stay in communication.\n"
                 else:
-                    response_text = """### 🌧️ Mumbai Weather & High Tide Alert
-- **Location**: Mumbai Metropolitan Region (MMR)
-- **Status**: ⚠️ **Red Alert** due to active monsoon depression.
-- **Forecast**: Continuous heavy to very heavy rainfall expected over the next 24 hours.
-- **High Tide Alert**: 4.5-meter tide expected at 2:30 PM. Risk of storm surge and drainage backflow in low-lying zones (Hindmata, Milan Subway).
-- **Safety Guidelines**: Citizens are advised to stay indoors. Avoid waterlogged subways.
-"""
-                response_text += "\n*Meteorological predictions provided via EOC Risk Prediction Agent.*"
+                    response_text += "1. **Standard Operations**: No active weather warning. Normal safety precautions apply.\n"
+                    response_text += "2. **Outdoor Travel**: Safe for travel, but remain alert for local convective shower updates.\n"
+                    response_text += "3. **Water Safety**: Exercise standard caution when near rivers, beaches, or reservoirs.\n"
+                
+                response_text += f"\n*Real-time meteorological and risk prediction data compiled via EOC Risk Prediction Agent.*"
 
             elif any(k in user_text_lower for k in ["missing", "find person", "lost"]):
                 active_sub_agent = "Resource Agent"

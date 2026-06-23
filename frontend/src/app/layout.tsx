@@ -16,10 +16,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="h-full bg-slate-950 text-slate-100 antialiased">
-      <body className="min-h-screen flex bg-slate-950">
+    <html lang="en" className="h-full bg-slate-50 text-slate-800 antialiased">
+      <body className="min-h-screen flex bg-slate-50">
         <Sidebar />
-        <main className="flex-1 flex flex-col bg-slate-950 overflow-x-hidden relative h-screen">
+        <main className="flex-1 flex flex-col bg-white overflow-x-hidden relative h-screen">
           {children}
         </main>
       </body>
