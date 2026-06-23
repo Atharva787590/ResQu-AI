@@ -4,6 +4,46 @@ ResQu AI is an advanced, AI-powered emergency response assistant and real-time s
 
 ---
 
+## 📸 Application Showcase
+
+### 1. Emergency Operations Command (EOC) Dashboard
+The EOC Dashboard provides a unified command center displaying live crisis stats, active incidents stream, and resource availability (shelter and hospital beds) on an interactive dark-themed map centered over Mumbai.
+![EOC Dashboard](frontend/public/screenshots/dashboard.png)
+
+### 2. AI Emergency Coordinator (Multi-Agent Chatbot)
+State your emergency or request assistance. The Coordinator dynamically delegates queries (e.g., first-aid steps or route safety checks) to specialized agents, rendering live agent routing traces.
+![AI Chatbot](frontend/public/screenshots/chat.png)
+
+### 3. Shelter Finder
+List and search active emergency shelter locations, filtering by pet friendliness, medical support, and capacity. Pan-zoom links directly focus the map on the selected shelter.
+![Shelter Finder](frontend/public/screenshots/shelters.png)
+
+### 4. Evacuation Route Planner
+Define origin and destination coordinates on the map. The Routing Agent will calculate the safest route, dynamically charting a path that avoids active critical incident zones.
+![Evacuation Routes](frontend/public/screenshots/routes.png)
+
+### 5. Emergency Medical Help Directory
+A live directory of nearby hospitals (KEM, Lilavati, Sion) showing available beds, blood bank inventories, and quick dispatch ambulance numbers.
+![Medical Directory](frontend/public/screenshots/medical.png)
+
+### 6. SOS Distress System
+Initiate a high-priority distress broadcast with mock GPS capture, notifying EOC responders immediately.
+![SOS System](frontend/public/screenshots/sos.png)
+
+### 7. Missing Persons Board
+Search, register, and track missing person profiles to help reunite separated family members during crises.
+![Missing Persons](frontend/public/screenshots/missing.png)
+
+### 8. Volunteer Center
+Coordinate crisis responders by registry and match their specialized skills (CPR, translation) with active EOC emergency tasks.
+![Volunteer Center](frontend/public/screenshots/volunteers.png)
+
+### 9. Offline Emergency Mode
+Access survival checklists, CPR guides, and earthquake/fire protocol manuals locally without active internet. Complete with direct browser print-to-PDF layout options.
+![Offline Mode](frontend/public/screenshots/offline.png)
+
+---
+
 ## 🚀 Key Features
 
 1. **AI Emergency Assistant**: A chat assistant utilizing a multi-agent routing structure (Google ADK 2.0) that classifies emergencies and delegates tasks to specialized sub-agents.
