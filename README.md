@@ -108,12 +108,26 @@ sequenceDiagram
 
 ## 🛠️ Local Installation & Setup
 
-### Prerequisites
+### Option 1: Running with Docker Compose (Recommended)
+This is the easiest way to launch the entire full-stack application (frontend + backend + persistent SQLite database) in one command:
+
+1. Ensure you have **Docker** and **Docker Compose** installed.
+2. In the project root, run:
+   ```bash
+   docker compose up --build
+   ```
+3. Open [http://localhost:3000](http://localhost:3000) in **Brave Browser** to access the application.
+
+---
+
+### Option 2: Running Manually
+
+#### Prerequisites
 - Node.js (v18+)
 - Python (v3.10+)
 - [uv](https://github.com/astral-sh/uv) (recommended) or pip
 
-### Backend Setup (FastAPI)
+#### Backend Setup (FastAPI)
 1. Navigate to the backend directory:
    ```bash
    cd backend
@@ -133,7 +147,7 @@ sequenceDiagram
    uv run python -m uvicorn app.fast_api_app:app --port 8000 --log-level info
    ```
 
-### Frontend Setup (Next.js)
+#### Frontend Setup (Next.js)
 1. Navigate to the frontend directory:
    ```bash
    cd ../frontend
@@ -146,5 +160,44 @@ sequenceDiagram
    ```bash
    npm run dev -- -p 3000
    ```
+4. Open [http://localhost:3000](http://localhost:3000) in **Brave Browser**.
 
-Open [http://localhost:3000](http://localhost:3000) in **Brave Browser** to access the live dashboard.
+---
+
+## 🌐 Production Cloud Deployment Guide
+
+A fully working production deployment requires hosting the FastAPI backend on a server platform and hosting the Next.js frontend on a static/serverless platform.
+
+### Step 1: Deploying the FastAPI Backend
+You can host the Python FastAPI backend on services like **Render**, **Railway**, **Fly.io**, or **Google Cloud Run**.
+
+#### Using Render (Quickest)
+1. Sign up for a [Render](https://render.com) account.
+2. Click **New +** and select **Web Service**.
+3. Connect your GitHub repository containing the `ResQu-AI` project.
+4. Set the following fields:
+   - **Root Directory**: `backend`
+   - **Runtime**: `Docker` (Render will automatically detect `backend/Dockerfile`)
+   - **Instance Type**: Free or Starter
+5. Add the following **Environment Variables** in Render's configuration:
+   - `GOOGLE_GENAI_USE_VERTEXAI`: `False`
+   - `GOOGLE_API_KEY`: *(Optional: Your Gemini API Key)*
+   - `DATABASE_URL`: `sqlite:////data/database.db` (Configure a persistent disk mount at `/data` inside Render to persist the SQLite database file)
+6. Click **Deploy Web Service**. Render will build and host your backend. Note down the public URL (e.g. `https://resqu-ai-backend.onrender.com`).
+
+---
+
+### Step 2: Deploying the Next.js Frontend
+You can host the frontend on **Vercel** (recommended), **Netlify**, or **Amplify**.
+
+#### Using Vercel (Optimized for Next.js)
+1. Sign up for a [Vercel](https://vercel.com) account.
+2. Click **Add New** -> **Project**.
+3. Select your `ResQu-AI` repository.
+4. Set the following fields:
+   - **Root Directory**: `frontend`
+   - **Framework Preset**: `Next.js`
+5. Expand the **Environment Variables** panel and add:
+   - `NEXT_PUBLIC_API_URL`: `https://resqu-ai-backend.onrender.com` *(Replace this with your actual deployed Render backend URL)*
+6. Click **Deploy**. Vercel will compile and host your frontend globally. Open your frontend URL to access the fully functional cloud-deployed app!
+
