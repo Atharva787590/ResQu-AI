@@ -288,8 +288,6 @@ Welcome to the emergency operations assistant. I can coordinate resource discove
             
             # Format the output with the EOC active sub-agent metadata
             final_output = f"**[EOC Active Agent: {active_sub_agent}]**\n\n"
-            if not HAS_CREDENTIALS:
-                final_output += "*⚠️ Demo Mode: Running offline fallback agent (No API keys configured).*\n\n"
             final_output += response_text
             
             yield Event(

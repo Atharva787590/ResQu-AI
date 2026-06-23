@@ -166,7 +166,7 @@ export default function SosPage() {
                       onClick={handleFetchMockGPS}
                       className="text-[10px] font-bold text-rose-500 hover:text-rose-400"
                     >
-                      🛰️ Capture Live GPS (Mock)
+                      🛰️ Acquire GPS Location
                     </button>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
