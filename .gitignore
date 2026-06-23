@@ -1,0 +1,37 @@
+# Dependency directories
+node_modules/
+.venv/
+venv/
+ENV/
+env/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Next.js build output
+.next/
+out/
+build/
+
+# Local databases & logs
+*.db
+*.sqlite
+*.log
+.DS_Store
+
+# IDE and configuration files
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
