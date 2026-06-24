@@ -1,0 +1,33 @@
+# Render Blueprint Specification for ResQu AI
+services:
+  # 1. FastAPI Backend Service
+  - type: web
+    name: resqu-ai-backend
+    env: docker
+    dockerContext: backend
+    dockerfilePath: Dockerfile
+    plan: free
+    numInstances: 1
+    envVars:
+      - key: GOOGLE_GENAI_USE_VERTEXAI
+        value: "False"
+      - key: GOOGLE_API_KEY
+        sync: false # Set in the Render UI dashboard
+      - key: DATABASE_URL
+        value: sqlite:////data/database.db
+    disk:
+      name: backend-db-disk
+      mountPath: /data
+      sizeGB: 1
+
+  # 2. Next.js Frontend Service
+  - type: web
+    name: resqu-ai-frontend
+    env: docker
+    dockerContext: frontend
+    dockerfilePath: Dockerfile
+    plan: free
+    numInstances: 1
+    envVars:
+      - key: NEXT_PUBLIC_API_URL
+        value: https://resqu-ai-backend.onrender.com # Change this if your backend service name differs
