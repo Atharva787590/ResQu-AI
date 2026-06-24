@@ -126,6 +126,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.get("/health")
+def health_check():
+    return {"status": "healthy", "timestamp": datetime.datetime.utcnow().isoformat()}
+
 # Custom REST Endpoints
 @app.get("/api/incidents")
 def read_incidents():
